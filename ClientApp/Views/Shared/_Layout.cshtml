@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ClientApp</title>
+    <link href="~/Asset/DataTable_BS4/Bootstrap-4-4.6.0/css/bootstrap.min.css" rel="stylesheet" />
+
+    <link href="~/Asset/DataTable_BS4/DataTables-1.11.3/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/Asset/DataTable_BS4/Responsive-2.2.9/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+
+    <link href="~/Asset/SweetAlert2/sweetalert2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    @RenderSection("Style", required: false)
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ClientApp</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+
+        @RenderBody()
+
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - ClientApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/Asset/DataTable_BS4/jQuery-3.6.0/jquery-3.6.0.min.js"></script>
+    <script src="~/Asset/Js/common.js"></script>
+    <script src="~/Asset/DataTable_BS4/Bootstrap-4-4.6.0/js/bootstrap.min.js"></script>
+
+    <script src="~/Asset/DataTable_BS4/DataTables-1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="~/Asset/DataTable_BS4/DataTables-1.11.3/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/Asset/DataTable_BS4/Responsive-2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="~/Asset/DataTable_BS4/Responsive-2.2.9/js/responsive.bootstrap4.min.js"></script>
+
+
+
+    <script src="~/Asset/SweetAlert2/sweetalert2.js"></script>
+    <script src="~/js/site.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

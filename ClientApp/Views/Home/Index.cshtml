@@ -1,0 +1,365 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+@section Style{
+    <style>
+        /*  .modal {
+            position: absolute;
+            top: -150px;
+            right: 0px;
+            bottom: 0;
+            left: 0;
+            z-index: 10040;
+            overflow: auto;
+            overflow-y: auto;
+        }*/
+    </style>
+}
+<!-- Main Content Begin-->
+
+
+
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <marquee><h3>Employee Information Project(Asp.Net Core 3.1 Web Api)</h3></marquee>
+            </div>
+        </div>
+       
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <button type="button" class="btn btn-primary rounded" onclick="ShowModal()">Create New</button>
+
+            </div>
+            <div class="card-body">
+
+                <table class="table table-striped table-bordered dt-responsive nowrap" style="width:100%" id="tblData">
+                    <thead>
+                        <tr class="text-center">
+                            <th>#</th>
+                            <th>First Name</th>
+                            <th>Middle Name</th>
+                            <th>Last Name</th>
+                            <th>Full Name</th>
+                            <th>Created</th>
+                            <th>Updated</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-md" tabindex="-1" role="dialog" aria-labelledby="EmployeeModalLabel"
+     aria-hidden="true" id="EmployeeModal" data-backdrop="false">
+
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h4 id="addModalHeadline">Add Employee</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="card">
+                    <form id="frmData">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input type="hidden" id="Id" name="Id" value="" />
+                                    <div class="form-group">
+                                        <label>First Name</label>
+                                        <input type="text" id="FirstName" name="FirstName" class="form-control" value="" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Middle Name</label>
+                                        <input type="text" id="MiddleName" name="MiddleName" class="form-control" value="" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Last Name</label>
+                                        <input type="text" id="LastName" name="LastName" class="form-control" value="" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer text-sm-left text-md-left text-lg-left text-xl-left">
+                            <button type="submit" class="btn btn-primary" id="btnSave">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-md" tabindex="-1" role="dialog" aria-labelledby="EmployeeDetailsModalLabel"
+     aria-hidden="true" id="EmployeeDetailsModal" data-backdrop="false">
+
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h4 id="headingOfDetails">Employee Details information</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="empDetails">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content End-->
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+            LoadTableData();
+            CleanData();
+        });
+        function formateDate(vdate) {
+            var formattedDate = new Date(vdate);
+            var d = formattedDate.getDate();
+            var m = formattedDate.getMonth();
+            //  m += 1;  // JavaScript months are 0-11
+            var y = formattedDate.getFullYear();
+
+            var monthNames = [
+                "Jan", "Feb", "Mar",
+                "Apr", "May", "Jun", "Jul",
+                "Aug", "Sep", "Oct",
+                "Nov", "Dec"
+            ];
+
+            var fullDate = d + "-" + monthNames[m] + "-" + y;
+            return fullDate;
+        }
+        function LoadTableData() {
+            Common.Ajax('GET', 'https://localhost:44335/api/Employee', [], 'json', ajaxGetAllEmployee);
+        }
+
+        function ajaxGetAllEmployee(response) {
+
+            $("#tblData tbody").empty();
+            var count = 1;
+            $.each(response, function (index, data) {
+                var updatedDate = data.updatedAt;
+                if (updatedDate == null) {
+                    updatedDate = "Not Updated"
+                }
+                else {
+                    updatedDate = formateDate(data.updatedAt);
+                }
+                $("#tblData tbody").append(
+                    `<tr>
+                            <td>${count}</td>
+                            <td>${data.firstName}</td>
+                            <td>${data.middleName}</td>
+                            <td>${data.lastName}</td>
+                            <td>${data.firstName}-${data.middleName}-${data.lastName} </td>
+                            <td>${formateDate(data.createdAt)}</td>
+                            <td>${updatedDate}</td>
+                            <td>
+                                <a href="#" class="btn btn-warning btnEdit" onclick="Edit(${data.id},'${data.firstName}','${data.middleName}','${data.lastName}')">Edit</a>
+                                <a href="#" class="btn btn-danger btnDelete" onclick="Delete(${data.id},'${data.firstName}')">Delete</a>
+                                <a href="#" class="btn btn-success btnDetails" onclick="Details(${data.id})">Details</a>
+                            </td>
+                        </tr>`
+                )
+
+                count = count + 1;
+            })
+
+            $("#tblData").DataTable();
+
+        }
+
+
+        function Details(id) {
+
+            Common.Ajax('GET', 'https://localhost:44335/api/Employee/' + id, [], 'json', ajaxGetEmployeeDetails);
+        }
+
+        function ajaxGetEmployeeDetails(response) {
+            $("#empDetails").empty();
+            $("#headingOfDetails").empty();
+            $("#headingOfDetails").append(`Details information of <b>${response.firstName}</b>`);
+            $("#empDetails").append(`<div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                First Name
+                                <span class="badge badge-primary badge-pill">${response.firstName}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Middle Name
+                                <span class="badge badge-primary badge-pill">${response.middleName}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Last Name
+                                <span class="badge badge-primary badge-pill">${response.lastName}</span>
+                            </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Created Date
+                                <span class="badge badge-primary badge-pill">${formateDate(response.createdAt)}</span>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div class="card-footer bg-primary text-white text-center">
+                        Develop by Nayeem
+                    </div>
+                </div>
+            </div>
+            </div>`);
+            $("#EmployeeDetailsModal").modal("show");
+        }
+
+        function ShowModal() {
+            CleanData();
+            $("#EmployeeModal").modal("show");
+        }
+
+        function CleanData() {
+            $("#Id").val(0);
+            $("#FirstName").val("");
+            $("#MiddleName").val("");
+            $("#LastName").val("");
+            $("#addModalHeadline").empty();
+            $("#addModalHeadline").text("Add Employee");
+        }
+
+        function Edit(id, firstName, middleName, lastName) {
+            CleanData();
+            $("#Id").val(id);
+            $("#FirstName").val(firstName);
+            $("#MiddleName").val(middleName);
+            $("#LastName").val(lastName);
+
+            $("#addModalHeadline").text(`Edit information of ${firstName}`);
+            $("#EmployeeModal").modal("show");
+        }
+
+
+        $('#btnSave').click(function () {
+
+            $('#frmData').on('submit', function (event) {
+                event.preventDefault();
+
+                var frmdata = {
+                    "id": parseInt($("#Id").val()),
+                    "firstName": $("#FirstName").val(),
+                    "middleName": $("#MiddleName").val(),
+                    "lastName": $("#LastName").val(),
+                    "createdAt": null,
+                    "updatedAt": null
+                }
+                console.log(frmdata);
+                $("#EmployeeModal").modal("hide");
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to save this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, save it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: 'https://localhost:44335/api/Employee',
+                            type: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: JSON.stringify(frmdata),
+                            beforeSend: function () {
+                                $('#btnSave').attr('disabled', 'disabled');
+                                $('#btnSave').val('Submitting...');
+
+                            },
+                        }).done(function (data) {
+                            console.log(frmdata);
+                            console.log(data);
+                            $("#btnSave").removeAttr('disabled');
+                            if ($("#Id").val() > 0) {
+                                swal.fire('success', 'Updated Successfully!', 'success').then(function () {
+                                    CleanData();
+                                    location.reload();
+                                });
+                            }
+                            else {
+                                swal.fire('success', 'Saved Successfully!', 'success').then(function () {
+                                    CleanData();
+                                    location.reload();
+                                });
+                            }
+
+
+                        }).fail(function () {
+                            $("#btnSave").removeAttr('disabled');
+                            swal.fire('warning', 'Failed!', 'warning');
+                        })
+                    }
+
+                });
+
+            })
+
+        })
+
+        function Delete(Id, firstName) {
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to Delete " + `${firstName}!!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "https://localhost:44335/api/Employee/" + Id,
+                        data: { Id: Id },
+                        type: 'DELETE',
+                    })
+                        .done(function () {
+
+                            swal.fire('Delete', 'Delete Successfully!', 'success').then(function () {
+                                window.location.reload();
+                            });
+                        })
+                        .fail(function () {
+                            swal.fire('Cancelled', 'It will not be deleted. Please try again later !!!', 'error');
+                        });
+                }
+
+            });
+        }
+    </script>
+}
+
+
