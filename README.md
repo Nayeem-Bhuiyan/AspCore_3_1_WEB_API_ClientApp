@@ -1,6 +1,6 @@
-# AspCore_3_1_WEB_API_ClientApp
+#Before Run the Project
 
-Required Tools
+Required Tools And Configuration
 
 Visual studio 2019
 
